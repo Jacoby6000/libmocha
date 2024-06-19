@@ -35,9 +35,5 @@
           make install
         '';
       };
-    }) // overlays.default = final: prev: {
-      devkitNix = {
-        inherit (packages prev) libmocha;
-      };
-    };
+    });
 }
