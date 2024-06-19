@@ -55,6 +55,7 @@ LIBS	:=
 # include and lib
 #---------------------------------------------------------------------------------
 LIBDIRS	:= $(PORTLIBS) $(WUT_ROOT)
+	
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -97,6 +98,14 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 			-I. 
 
+# if LIBMOCHA_NIX_BUILD is set, path should not include the DEVKITPRO path
+FINAL_DESTDIR := $(DESTDIR)$(DEVKITPRO)/wut/usr
+
+ifeq ($(LIBMOCHA_NIX_BUILD),1)
+	FINAL_DESTDIR := $(DESTDIR)/
+endif
+
+
 .PHONY: all dist-bin dist-src dist install clean
 
 #---------------------------------------------------------------------------------
@@ -111,9 +120,8 @@ dist-src:
 dist: dist-src dist-bin
 
 install: dist-bin
-	mkdir -p $(DESTDIR)$(DEVKITPRO)/wut/usr
-	bzip2 -cd libmocha-$(VERSION).tar.bz2 | tar -xf - -C $(DESTDIR)$(DEVKITPRO)/wut/usr
-
+	mkdir -p $(FINAL_DESTDIR)
+	bzip2 -cd libmocha-$(VERSION).tar.bz2 | tar -xf - -C $(FINAL_DESTDIR)
 lib:
 	@[ -d $@ ] || mkdir -p $@
 

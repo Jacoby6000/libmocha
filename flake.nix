@@ -2,6 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
+
     devkitNix.url = "github:Jacoby6000/devkitNix";
   };
 
@@ -30,8 +31,13 @@
 
         installPhase = ''
           export DESTDIR=$out
+          export LIBMOCHA_NIX_BUILD=1
           make install
         '';
       };
-    });
+    }) // overlays.default = final: prev: {
+      devkitNix = {
+        inherit (packages prev) libmocha;
+      };
+    };
 }
